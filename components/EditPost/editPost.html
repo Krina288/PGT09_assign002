@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<head>
+    <meta http-equiv="Content-type" content="text/html;charset=utf-8" />
+    <script type="text/javascript"></script>
+    <script src="editPost.js"></script>
+    <title>Edit Post</title>
+</head>
+
+<body>
+    <div style="margin-left: 5px;">
+        <!-- Header -->
+        <div id="div_dashboard_title" style="display: flex; 
+                width: 100%; 
+                flex-direction: row; 
+                justify-items: center;
+                justify-content: space-between;">
+            <h1>Edit Post</h1>
+            <div style="display: flex; justify-items: center;">
+                <button id="btn_profile" style="border: none; background-color: transparent; margin-right: -5px;">
+                    <img src="../assets/profile-user.png" style="align-self: center; height: 30px;">
+                </button>
+                <button id="btn_sign_out"
+                    style="margin-left: 5px; font-weight: 600; border: none; background-color: transparent;"
+                    onclick="onPressSignOut()">Sign Out</button>
+            </div>
+        </div>
+
+        <!-- Edit Post -->
+        <div style="display: flex; flex-direction: column; width: 40%;">
+            <div style=" margin-top: 10px; display: flex; flex-direction: column;">
+                <input type="text" id="txt_post_title" name="txt_post_title" placeholder="Enter post title"
+                    value="Test Event1"
+                    style="padding: 5px; margin-top: 10px;">
+                <textarea style="padding: 5px; margin-top: 10px; height: 150px;" id="txt_post_msg" name="txt_post_msg" rows="10" placeholder="Enter message">Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator.</textarea>
+                <!-- <input type="text" id="txt_post_msg" name="txt_post_msg" placeholder="Enter message"
+                    value="Reference site about Lorem Ipsum, giving information on its origins, as well as a random
+                            Lipsum generator."
+                    style="padding: 5px; margin-top: 10px; height: 150px;"> -->
+            </div>
+            <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
+                <div>
+                    <input type="radio" id="btn_public" name="post_type" value="Public" checked>
+                    <label for="btn_public">Public</label><br>
+                    <input type="radio" id="btn_private" name="post_type" value="Private">
+                    <label for="btn_private">Private</label><br>
+                </div>
+                <button id="btn_create_post" style=" font-weight: 600; height: 40px; margin-top: 10px; align-self: flex-end;"
+                    onclick="onPressSave()">Save Post</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

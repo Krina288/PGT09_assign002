@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+
+<head>
+    <meta http-equiv="Content-type" content="text/html;charset=utf-8" />
+    <script type="text/javascript"></script>
+    <script src="dashboard.js"></script>
+    <title>Dasboard</title>
+</head>
+
+<body>
+    <div style="margin-left: 5px;">
+        <!-- Header -->
+        <div id="div_dashboard_title" style="display: flex; 
+                width: 100%; 
+                flex-direction: row; 
+                justify-items: center;
+                justify-content: space-between;">
+            <h1>Dasboard</h1>
+            <div style="display: flex; justify-items: center;">
+                <button id="btn_profile" style="border: none; background-color: transparent; margin-right: -5px;">
+                    <img src="../assets/profile-user.png" style="align-self: center; height: 30px;">
+                </button>
+                <button id="btn_sign_out"
+                    style="margin-left: 5px; font-weight: 600; border: none; background-color: transparent;"
+                    onclick="onPressSignOut()">Sign Out</button>
+            </div>
+        </div>
+
+        <!-- Search Box -->
+        <div
+            style="width: 40%; border-width: 1px; border-style: groove; border-color: black; border-radius: 3px; display: flex; justify-items: center; justify-content: space-between;">
+            <input type="text" id="txt_search" name="txt_search" placeholder="Enter search keyword"
+                style="margin: 5px; padding: 5px; border: none; width: 85%;">
+            <img src="../assets/search.png" style="align-self: center; height: 25px;">
+        </div>
+
+        <!-- Create Post -->
+        <div style="display: flex; flex-direction: column; width: 40%;">
+            <div style=" margin-top: 10px; display: flex; flex-direction: column;">
+                <label style="font-weight: 600;">Create Post</label>
+                <input type="text" id="txt_post_title" name="txt_post_title" placeholder="Enter post title"
+                    style="padding: 5px; margin-top: 10px;">
+                <textarea style="padding: 5px; margin-top: 10px; height: 150px;" id="txt_post_msg" name="txt_post_msg" rows="10"
+                    placeholder="Enter message"></textarea>
+                <!-- <input type="text" id="txt_post_msg" name="txt_post_msg" placeholder="Enter message"
+                    style="padding: 5px; margin-top: 10px; height: 150px;"> -->
+            </div>
+            <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
+                <div>
+                    <input type="radio" id="btn_public" name="post_type" value="Public" checked>
+                    <label for="btn_public">Public</label><br>
+                    <input type="radio" id="btn_private" name="post_type" value="Private">
+                    <label for="btn_private">Private</label><br>
+                </div>
+                <button id="btn_create_post"
+                    style=" font-weight: 600; height: 40px; margin-top: 10px; align-self: flex-end;"
+                    onclick="onPressAddPost()">Add Post</button>
+            </div>
+        </div>
+
+        <!-- Post List -->
+        <div style="margin-top: 10px;">
+            <label style="font-weight: 600;">Post List</label>
+        </div>
+        <div style="width: 40%;">
+            <ul style="list-style-type: none; padding: 0px;" id="post_list">
+                <!-- <script>
+                    var html = arrPostList.map(function (element, index) {
+                            return index % 2 == 0 ?
+                             '<li style="margin-top: 10px; border-width: 1px; border-color: black; border-style: groove; padding: 5px; display: flex; flex-direction: column;" id="edit_item">' +
+                             '<label style="font-weight: 600;">' + element.title  + '</label><br>' +
+                             '<label style="margin-top: 10px;">' + element.message + '</label ><br>' +
+                             '<div style="display: flex; flex-direction: row; justify-items: center; justify-content: flex-end;" id="btn_editDelete">' +
+                             '<button style="width: 50px; height: 30px; margin-right: 10px;" id="btn_edit" >Edit</button>' +
+                             '<button style="width: 50px; height: 30px;" id="btn_delete">Delete</button>' +
+                             '</div>' +
+                             '</li>'
+                            : 
+                             '<li style="margin-top: 10px; border-width: 1px; border-color: black; border-style: groove; padding: 5px; display: flex; flex-direction: column;" id="item">' +
+                             '<label style="font-weight: 600;">' + element.title + '</label><br>' +
+                             '<label>' + element.message + '</label > <br>' +
+                             '</li>';
+                        }).join('');
+
+                    document.getElementById('post_list').innerHTML = html;
+                    document.getElementById('post_list').addEventListener("click", function (e) {
+                            alert('Own post')
+                            console.log(e);
+                    })
+                    // document.getElementById('item').addEventListener("click", function (e) {
+                    //         alert("Other's post")
+                    //         console.log(e);
+                    // })
+                    document.getElementById('btn_editDelete').addEventListener("click", function (e) {
+                            alert('click edit btn')
+                            console.log(e);
+                    })
+                        
+                </script> -->
+
+                <li
+                    style="margin-top: 10px; border-width: 1px; border-color: black; border-style: groove; padding: 5px; display: flex; flex-direction: column;">
+                    <button
+                        style="background-color: transparent; border-style: none; text-align: left; display: flex; flex-direction: column"
+                        onclick="onPressPostDetail()">
+                        <label style="font-weight: 600;">Test Event1</label><br>
+                        <label>Reference site about Lorem Ipsum, giving information on its origins, as well as a random
+                            Lipsum generator.</label><br>
+                    </button>
+                    <div style="display: flex; flex-direction: row; justify-items: center; justify-content: flex-end;">
+                        <button style="width: 50px; height: 30px; margin-right: 10px;" id="btn_edit" onclick="onPressEditPost()">Edit</button>
+                        <button style="width: 50px; height: 30px;" id="btn_delete" onclick="onPressDeletePost()">Delete</button>
+                    </div>
+                </li>
+                <li
+                    style="margin-top: 10px; border-width: 1px; border-color: black; border-style: groove; padding: 5px; display: flex; flex-direction: column;">
+                    <button
+                        style="background-color: transparent; border-style: none; text-align: left; display: flex; flex-direction: column"
+                        onclick="onPressPostDetail()">
+                        <label style="font-weight: 600;">Test Event2</label><br>
+                        <label>Reference site about Lorem Ipsum, giving information on its origins, as well as a random
+                            Lipsum generator.</label><br>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>

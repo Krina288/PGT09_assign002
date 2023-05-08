@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<head>
+    <meta http-equiv="Content-type" content="text/html;charset=utf-8" />
+    <script type="text/javascript"></script>
+    <script src="login.js"></script>
+    <!-- <script type="module" src="../main.js"></script> -->
+    <title>Javascript Demo Blog</title>
+</head>
+
+<body>
+    <h1>Welcome to Javascript Demo Blog</h1>
+
+    <!-- Login -->
+    <div id="div_login">
+        <h3 style="margin-left: 5px;">Sign In</h3>
+        <label for="user_name" style="margin-left: 5px;">Email</label><br>
+        <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            placeholder="Enter email address"
+            style="margin: 5px; padding: 5px;"
+            onkeyup="handleInput(this)"
+        ><br>
+        <label for="password" style="margin-left: 5px;">Password</label><br>
+        <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            placeholder="Enter password"
+            maxlength="16"
+            minlength="6"
+            style="margin: 5px; padding: 5px;"
+            onkeyup="handleInput(this)"
+        ><br>
+        <input 
+            type="button" 
+            value="Sign In" 
+            id="sign_in" 
+            class="btn"
+            style="margin: 5px; padding: 5px; margin-top: 10px; margin-bottom: 10px; width: 10%;"
+            onclick="onPressSignIn()"
+        ><br>
+        <label style="margin-left: 5px;">Create new account?</label>
+        <button 
+            id="sign_up" 
+            style="margin-left: -5px; font-weight: 600; border: none; background-color: transparent;" 
+            onclick="onPressSignUp()"
+        >Sign Up</button>
+    </div>
+</body>
+
+</html>
