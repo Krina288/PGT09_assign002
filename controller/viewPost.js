@@ -1,12 +1,12 @@
 function onPressSignOut() {
-    window.location.href = '../Login/login.html';
+    window.location.href = 'login.html';
 }
 
 function onPressEditPost() {
-    window.location.href = '../EditPost/EditPost.html';
+    window.location.href = '/editPost.html';
 }
 
 function onPressDeletePost() {
     //add confirmation pop up
-    window.location.href = '../Dashboard/dashboard.html';
+    window.location.href = '/dashboard.html';
 }

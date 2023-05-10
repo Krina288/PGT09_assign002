@@ -8,10 +8,10 @@ function handleInput(e) {
 function onPressSignIn() {
     console.log('login data: ', login_data);
     //navigate screen
-    window.location.href = '../Dashboard/dashboard.html';
+    window.location.href = '/dashboard.html';
 };
 
 function onPressSignUp() {
-    window.location.href = '../Signup/signup.html';
+    window.location.href = '/signup.html';
 };
 

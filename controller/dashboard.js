@@ -7,23 +7,24 @@ let arrPostList = [
     { 'id': 5, 'title': 'Test Event5', 'message': 'Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator.' }
 ]
 
-// $(document).ready(function onPressAddPost () {
-//         alert('Post is created successfully.')
-// })
 function onPressPost(index) {
     alert('testing' + index)
 }
 
+function onPressAddPost() {
+        alert('Post is created successfully.')
+}
+    
 function onPressSignOut() {
-    window.location.href = '../Login/login.html';
+    window.location.href = '/login.html';
 }
 
 function onPressPostDetail() {
-    window.location.href = '../view/viewPost.html';
+    window.location.href = '/viewPost.html';
 }
 
 function onPressEditPost() {
-    window.location.href = '../EditPost/editPost.html';
+    window.location.href = '/editPost.html';
 }
 
 function onPressDeletePost() {

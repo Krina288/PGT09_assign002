@@ -8,7 +8,7 @@ function handleInput(e) {
 function onPressSignUp() {
     alert('Successfully register user!');
     console.log('Signup data: ', signup_data);
-    window.location.href = '../Dashboard/dashboard.html';
+    window.location.href = '/dashboard.html';
 };
 
 function onPressSignIn() {
