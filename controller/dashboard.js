@@ -1,4 +1,3 @@
-// const imgprofile = require('../assets/profile-user.png')
 let arrPostList = [
     { 'id': 1, 'title': 'Test Event1', 'message': 'Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator.' },
     { 'id': 2, 'title': 'Test Event2', 'message': 'Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator.' },

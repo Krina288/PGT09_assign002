@@ -1,3 +1,4 @@
+const { Client } = require('pg');
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -8,7 +9,6 @@ const server = http.createServer((req, res) => {
     const file = __dirname
     if (urlPath === '/' || urlPath === '/login.html') {
         const filePath = path.join(file.concat('/view'), '/login.html');
-        console.log('filepath, ', filePath);
         fs.readFile(filePath, 'utf8', (err, content) => {
             if (err) {
                 res.writeHead(500);
@@ -19,10 +19,7 @@ const server = http.createServer((req, res) => {
             }
         });
     } else if (urlPath === '/dashboard.html') {
-        // fs.readFile('../PGT09_assign002/components/Dashboard/dashboard.html', 'utf8', (err, content) => {
-        console.log('fileee: ', file);
-        const filePath =  path.join(__dirname, '/view/dashboard.html') ;
-        console.log('filepath, ', filePath);
+        const filePath = path.join(__dirname, '/view/dashboard.html');
         fs.readFile(filePath, (err, content) => {
             if (err) {
                 res.writeHead(500);
@@ -33,10 +30,7 @@ const server = http.createServer((req, res) => {
             }
         });
     } else if (urlPath === '/viewPost.html') {
-        // fs.readFile('../PGT09_assign002/components/Dashboard/dashboard.html', 'utf8', (err, content) => {
-        console.log('fileee: ', file);
         const filePath = path.join(__dirname, '/view/viewPost.html');
-        console.log('filepath, ', filePath);
         fs.readFile(filePath, (err, content) => {
             if (err) {
                 res.writeHead(500);
@@ -47,10 +41,7 @@ const server = http.createServer((req, res) => {
             }
         });
     } else if (urlPath === '/signup.html') {
-        // fs.readFile('../PGT09_assign002/components/Dashboard/dashboard.html', 'utf8', (err, content) => {
-        console.log('fileee: ', file);
         const filePath = path.join(__dirname, '/view/signup.html');
-        console.log('filepath, ', filePath);
         fs.readFile(filePath, (err, content) => {
             if (err) {
                 res.writeHead(500);
@@ -61,10 +52,7 @@ const server = http.createServer((req, res) => {
             }
         });
     } else if (urlPath === '/editPost.html') {
-        // fs.readFile('../PGT09_assign002/components/Dashboard/dashboard.html', 'utf8', (err, content) => {
-        console.log('fileee: ', file);
         const filePath = path.join(__dirname, '/view/editPost.html');
-        console.log('filepath, ', filePath);
         fs.readFile(filePath, (err, content) => {
             if (err) {
                 res.writeHead(500);
@@ -74,15 +62,8 @@ const server = http.createServer((req, res) => {
                 res.end(content);
             }
         });
-    }
-    
-    
-    
-    else if (urlPath === '/login.js') {
-        // fs.readFile('../PGT09_assign002/components/Dashboard/dashboard.html', 'utf8', (err, content) => {
-        console.log('fileee: ', file);
+    } else if (urlPath === '/login.js') {
         const filePath = path.join(__dirname, '/controller/login.js');
-        console.log('filepath, ', filePath);
         fs.readFile(filePath, (err, content) => {
             if (err) {
                 res.writeHead(500);
@@ -93,10 +74,7 @@ const server = http.createServer((req, res) => {
             }
         });
     } else if (urlPath === '/dashboard.js') {
-        // fs.readFile('../PGT09_assign002/components/Dashboard/dashboard.html', 'utf8', (err, content) => {
-        console.log('fileee: ', file);
         const filePath = path.join(__dirname, '/controller/dashboard.js');
-        console.log('filepath, ', filePath);
         fs.readFile(filePath, (err, content) => {
             if (err) {
                 res.writeHead(500);
@@ -108,7 +86,6 @@ const server = http.createServer((req, res) => {
         });
     } else if (urlPath === '/viewPost.js') {
         const filePath = path.join(__dirname, '/controller/viewPost.js');
-        console.log('filepath, ', filePath);
         fs.readFile(filePath, (err, content) => {
             if (err) {
                 res.writeHead(500);
@@ -120,7 +97,6 @@ const server = http.createServer((req, res) => {
         });
     } else if (urlPath === '/signup.js') {
         const filePath = path.join(__dirname, '/controller/signup.js');
-        console.log('filepath, ', filePath);
         fs.readFile(filePath, (err, content) => {
             if (err) {
                 res.writeHead(500);
@@ -132,7 +108,6 @@ const server = http.createServer((req, res) => {
         });
     } else if (urlPath === '/editPost.js') {
         const filePath = path.join(__dirname, '/controller/editPost.js');
-        console.log('filepath, ', filePath);
         fs.readFile(filePath, (err, content) => {
             if (err) {
                 res.writeHead(500);
@@ -142,14 +117,10 @@ const server = http.createServer((req, res) => {
                 res.end(content);
             }
         });
-    } 
-    
-    
-    
-    else if (urlPath.startsWith === '/assests') {
-        //create seprate folder for view and controller ---- tomorrow
-        const filePath = path.join(__dirname, '/assests');
-        console.log('new filepath: ', filePath);
+    } else if (urlPath.startsWith === '/assets') {
+        console.log('urlPath.startsWith: ', urlPath);
+        const filePath = path.join(__dirname, urlPath);
+        console.log('filepath: ', filePath);
         fs.readFile(filePath, (err, content) => {
             if (err) {
                 res.writeHead(500);
@@ -175,6 +146,51 @@ const server = http.createServer((req, res) => {
         res.end('Page not found');
     }
 });
+
+const client = new Client({
+    host: 'localhost',
+    port: 5432,
+    database: 'PGT09_assign002',
+    user: 'postgres',
+    password: '1234',
+})
+
+// Database connection
+client.connect((err) => {
+    if (err) {
+        console.error('connection error', err.stack)
+    } else {
+        console.log('connected')
+    }
+})
+
+// const execute = async (query) => {
+//     try {
+//         await client.connect();     // gets connection
+//         await client.query(query);  // sends queries
+//         console.log('database connection...')
+//         return true;
+//     } catch (error) {
+//         console.error(error.stack);
+//         return false;
+//     } finally {
+//         await client.end();         // closes connection
+//     }
+// };
+
+const text = `
+    CREATE TABLE IF NOT EXISTS "users" (
+	    "id" SERIAL,
+	    "name" VARCHAR(100) NOT NULL,
+	    "role" VARCHAR(15) NOT NULL,
+	    PRIMARY KEY ("id")
+    );`;
+
+// execute(text).then(result => {
+//     if (result) {
+//         console.log('Table created');
+//     }
+// });
 
 const port = 3000;
 server.listen(port, () => {
