@@ -1,24 +1,7 @@
-const create_post_data = {};
 var arrPosts = []
-
-function handleInput(e) {
-    create_post_data[e.name] = e.value;
-}
-
-function onPressPost(index) {
-    alert('testing' + index)
-}
-
-function onPressAddPost() {
-    validation()
-}
 
 function onPressSignOut() {
     window.location.href = '/login.html';
-}
-
-function onPressSearchPost() {
-    window.location.href = '/searchPost.html';
 }
 
 function onPressPostDetail(index) {
@@ -36,48 +19,7 @@ function onPressDeletePost(index) {
     alert('Post is deleted successfully.')
 }
 
-//Validation of input
-function validation() {
-    var title = document.getElementById('txt_post_title').value.trim();
-    var message = document.getElementById('txt_post_msg').value.trim();
-    var public = document.getElementById("btn_public");
-    var private = document.getElementById("btn_private");
-
-    if (title === '') {
-        alert('Please enter post title')
-    } else if (message === '') {
-        alert('Please enter post message')
-    } else {
-        if (public.checked == true) {
-            create_post_data['post_type'] = 'public'
-        } else {
-            create_post_data['post_type'] = 'private'
-        }
-        createPost()
-    }
-}
-
-
-function createPost() {
-    fetch('/createPost', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(create_post_data)
-    })
-        .then(response => response.text())
-        .then(data => {
-            console.log("create post data ==>", data);
-            alert('Post is created successfully.');
-            document.getElementById('txt_post_title').value = "";
-            document.getElementById('txt_post_msg').value = "";
-        })
-        .catch(error => {
-            console.log('Error creating post', error);
-        })
-}
-
+//Change API here for search post list --- pushpinder
 function getPostList() {
     arrPosts = []
     fetch('/getPosts')
@@ -122,7 +64,7 @@ function setupPostList() {
         txt_title.textContent = item.txt_post_title;
 
         var mybr = document.createElement('br');
-        
+
         const txt_description = document.createElement('label')
         txt_description.textContent = item.txt_post_msg;
 
@@ -136,7 +78,7 @@ function setupPostList() {
         divButtonContainer.style.justifyContent = 'flex-end';
         divButtonContainer.style.marginTop = '10px';
         divButtonContainer.style.marginBottom = '10px';
-    
+
         const buttonEdit = document.createElement('button');
         // button.onclick = onPressEditPost()
         buttonEdit.style.width = '60px';
@@ -162,7 +104,7 @@ function setupPostList() {
 
         listItem.appendChild(button);
         listItem.appendChild(divButtonContainer);
-    
+
         // Append the list item to the unordered list
         list.appendChild(listItem);
     });

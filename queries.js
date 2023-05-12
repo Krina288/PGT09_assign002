@@ -51,7 +51,7 @@ async function checkUserExist(email, password) {
     try {
         const query = 'SELECT COUNT(*) AS userCount FROM users WHERE email = $1 AND password = $2';
         const result = await pool.query(query, [email, password]);
-        const credentialCount = result.rows[0].userCount
+        const credentialCount = result.rows[0]
         return credentialCount > 0;
     } catch (error) {
         console.log('Error executing checkUserExist query', error);

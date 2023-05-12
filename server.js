@@ -68,6 +68,17 @@ const server = http.createServer(async(req, res) => {
                 res.end(content);
             }
         });
+    } else if (urlPath === '/searchPost.html') {
+        const filePath = path.join(__dirname, '/view/searchPost.html');
+        fs.readFile(filePath, (err, content) => {
+            if (err) {
+                res.writeHead(500);
+                res.end('Error serving searchPost page');
+            } else {
+                res.writeHead(200, { 'Content-Type': 'text/html' });
+                res.end(content);
+            }
+        });
     } else if (urlPath === '/login.js') {
         const filePath = path.join(__dirname, '/controller/login.js');
         fs.readFile(filePath, (err, content) => {
@@ -118,6 +129,17 @@ const server = http.createServer(async(req, res) => {
             if (err) {
                 res.writeHead(500);
                 res.end('Error serving editpost.js page');
+            } else {
+                res.writeHead(200, { 'Content-Type': 'text/javascript' });
+                res.end(content);
+            }
+        });
+    } else if (urlPath === '/searchPost.js') {
+        const filePath = path.join(__dirname, '/controller/searchPost.js');
+        fs.readFile(filePath, (err, content) => {
+            if (err) {
+                res.writeHead(500);
+                res.end('Error serving searchPost.js page');
             } else {
                 res.writeHead(200, { 'Content-Type': 'text/javascript' });
                 res.end(content);
