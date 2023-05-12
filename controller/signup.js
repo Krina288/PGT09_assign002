@@ -6,11 +6,53 @@ function handleInput(e) {
 }
 
 function onPressSignUp() {
-    alert('Successfully register user!');
-    console.log('Signup data: ', signup_data);
-    window.location.href = '/dashboard.html';
+    validation()
 };
 
 function onPressSignIn() {
     history.back();
+}
+
+//Validation of input
+function validation() {
+    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    var first_name = document.getElementById('first_name').value.trim();
+    var last_name = document.getElementById('last_name').value.trim();
+    var mobile_num = document.getElementById('mobile_num').value.trim();
+    var email = document.getElementById('email').value.trim();
+    var password = document.getElementById('password').value.trim();
+
+    if (first_name === '') {
+        alert('Please enter first name')
+    } else if (last_name === '') {
+        alert('Please enter last name')
+    } else if (mobile_num === '') {
+        alert('Please enter mobile number')
+    } else if (email === '') {
+        alert('Please enter email')
+    } else if (!email.match(mailformat)) {
+        alert('Please enter valid email address')
+    } else if (password === '') {
+        alert('Please enter password')
+    } else {
+        createUser()
+    }
+}
+
+function createUser() {
+    fetch('/registerUser', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(signup_data)
+    })
+        .then(response => response.text())
+        .then(data => {
+            console.log("create user data ==>", data);
+            window.location.href = '/dashboard.html';
+        })
+        .catch(error => {
+            console.log('Error creating user', error);
+        })
 }

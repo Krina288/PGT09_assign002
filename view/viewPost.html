@@ -34,11 +34,13 @@
 
         <!-- Post details -->
         <div style="display: flex; flex-direction: column; width: 40%; border-width: 1px; border-color: black; border-style: groove; padding: 10px;">
-            <label style="font-weight: 600;">Test Event1</label><br>
-            <label>Reference site about Lorem Ipsum, giving information on its origins, as well as a random
-                Lipsum generator.</label>
+            <label style="font-weight: 600;" id="post_title"></label><br>
+            <label id="post_msg"></label>
         </div>
+        <script>
+            document.getElementById('post_title').textContent = post_data.txt_post_title
+            document.getElementById('post_msg').textContent = post_data.txt_post_msg
+        </script>
     </div>
 </body>
-
 </html>

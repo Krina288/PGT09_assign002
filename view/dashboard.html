@@ -3,6 +3,12 @@
 <head>
     <meta http-equiv="Content-type" content="text/html;charset=utf-8" />
     <title>Dasboard</title>
+    <!-- <style>
+        div_postList {
+            list-style-type: none; 
+            padding: 0px
+        }
+    </style> -->
 </head>
 
 <body>
@@ -37,9 +43,9 @@
             <div style=" margin-top: 10px; display: flex; flex-direction: column;">
                 <label style="font-weight: 600;">Create Post</label>
                 <input type="text" id="txt_post_title" name="txt_post_title" placeholder="Enter post title"
-                    style="padding: 5px; margin-top: 10px;">
+                    style="padding: 5px; margin-top: 10px;" onkeyup="handleInput(this)">
                 <textarea style="padding: 5px; margin-top: 10px; height: 150px;" id="txt_post_msg" name="txt_post_msg"
-                    rows="10" placeholder="Enter message"></textarea>
+                    rows="10" placeholder="Enter message" onkeyup="handleInput(this)"></textarea>
                 <!-- <input type="text" id="txt_post_msg" name="txt_post_msg" placeholder="Enter message"
                     style="padding: 5px; margin-top: 10px; height: 150px;"> -->
             </div>
@@ -60,72 +66,13 @@
         <div style="margin-top: 10px;">
             <label style="font-weight: 600;">Post List</label>
         </div>
-        <div style="width: 40%;">
-            <ul style="list-style-type: none; padding: 0px;" id="post_list">
-                <!-- <script>
-                    var html = arrPostList.map(function (element, index) {
-                            return index % 2 == 0 ?
-                             '<li style="margin-top: 10px; border-width: 1px; border-color: black; border-style: groove; padding: 5px; display: flex; flex-direction: column;" id="edit_item">' +
-                             '<label style="font-weight: 600;">' + element.title  + '</label><br>' +
-                             '<label style="margin-top: 10px;">' + element.message + '</label ><br>' +
-                             '<div style="display: flex; flex-direction: row; justify-items: center; justify-content: flex-end;" id="btn_editDelete">' +
-                             '<button style="width: 50px; height: 30px; margin-right: 10px;" id="btn_edit" >Edit</button>' +
-                             '<button style="width: 50px; height: 30px;" id="btn_delete">Delete</button>' +
-                             '</div>' +
-                             '</li>'
-                            : 
-                             '<li style="margin-top: 10px; border-width: 1px; border-color: black; border-style: groove; padding: 5px; display: flex; flex-direction: column;" id="item">' +
-                             '<label style="font-weight: 600;">' + element.title + '</label><br>' +
-                             '<label>' + element.message + '</label > <br>' +
-                             '</li>';
-                        }).join('');
-
-                    document.getElementById('post_list').innerHTML = html;
-                    document.getElementById('post_list').addEventListener("click", function (e) {
-                            alert('Own post')
-                            console.log(e);
-                    })
-                    // document.getElementById('item').addEventListener("click", function (e) {
-                    //         alert("Other's post")
-                    //         console.log(e);
-                    // })
-                    document.getElementById('btn_editDelete').addEventListener("click", function (e) {
-                            alert('click edit btn')
-                            console.log(e);
-                    })
-                        
-                </script> -->
-
-                <li
-                    style="margin-top: 10px; border-width: 1px; border-color: black; border-style: groove; padding: 5px; display: flex; flex-direction: column;">
-                    <button
-                        style="background-color: transparent; border-style: none; text-align: left; display: flex; flex-direction: column"
-                        onclick="onPressPostDetail()">
-                        <label style="font-weight: 600;">Test Event1</label><br>
-                        <label>Reference site about Lorem Ipsum, giving information on its origins, as well as a random
-                            Lipsum generator.</label><br>
-                    </button>
-                    <div style="display: flex; flex-direction: row; justify-items: center; justify-content: flex-end;">
-                        <button style="width: 50px; height: 30px; margin-right: 10px;" id="btn_edit"
-                            onclick="onPressEditPost()">Edit</button>
-                        <button style="width: 50px; height: 30px;" id="btn_delete"
-                            onclick="onPressDeletePost()">Delete</button>
-                    </div>
-                </li>
-                <li
-                    style="margin-top: 10px; border-width: 1px; border-color: black; border-style: groove; padding: 5px; display: flex; flex-direction: column;">
-                    <button
-                        style="background-color: transparent; border-style: none; text-align: left; display: flex; flex-direction: column"
-                        onclick="onPressPostDetail()">
-                        <label style="font-weight: 600;">Test Event2</label><br>
-                        <label>Reference site about Lorem Ipsum, giving information on its origins, as well as a random
-                            Lipsum generator.</label><br>
-                    </button>
-                </li>
-            </ul>
+        <div style="width: 40%;" id="div_post_list">
         </div>
     </div>
     <script type="text/javascript" src="/dashboard.js"></script>
+    <script>
+        getPostList()
+    </script>
 </body>
 
 </html>

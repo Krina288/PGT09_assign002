@@ -30,17 +30,12 @@
         <div style="display: flex; flex-direction: column; width: 40%;">
             <div style=" margin-top: 10px; display: flex; flex-direction: column;">
                 <input type="text" id="txt_post_title" name="txt_post_title" placeholder="Enter post title"
-                    value="Test Event1"
-                    style="padding: 5px; margin-top: 10px;">
-                <textarea style="padding: 5px; margin-top: 10px; height: 150px;" id="txt_post_msg" name="txt_post_msg" rows="10" placeholder="Enter message">Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator.</textarea>
-                <!-- <input type="text" id="txt_post_msg" name="txt_post_msg" placeholder="Enter message"
-                    value="Reference site about Lorem Ipsum, giving information on its origins, as well as a random
-                            Lipsum generator."
-                    style="padding: 5px; margin-top: 10px; height: 150px;"> -->
+                    style="padding: 5px; margin-top: 10px;" onkeyup="handleInput(this)">
+                <textarea style="padding: 5px; margin-top: 10px; height: 150px;" id="txt_post_msg" name="txt_post_msg" rows="10" placeholder="Enter message" onkeyup="handleInput(this)"></textarea>
             </div>
             <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
                 <div>
-                    <input type="radio" id="btn_public" name="post_type" value="Public" checked>
+                    <input type="radio" id="btn_public" name="post_type" value="Public">
                     <label for="btn_public">Public</label><br>
                     <input type="radio" id="btn_private" name="post_type" value="Private">
                     <label for="btn_private">Private</label><br>
@@ -49,6 +44,15 @@
                     onclick="onPressSave()">Save Post</button>
             </div>
         </div>
+        <script>
+            document.getElementById('txt_post_title').value = post_data.txt_post_title
+            document.getElementById('txt_post_msg').textContent = post_data.txt_post_msg
+            if (post_data.post_type === 'public') {
+                document.getElementById('btn_public').checked = true
+            } else {
+                document.getElementById('btn_private').checked = true
+            }
+        </script>
     </div>
 </body>
 

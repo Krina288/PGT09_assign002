@@ -2,30 +2,35 @@ const { Client } = require('pg');
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const { createUser, createTable, fetchUsers,
+    checkUserExist, createPostTable, createPost,
+    fetchPosts, fetchPostDetailsById, editPost} = require('./queries')
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async(req, res) => {
     const urlPath = req.url
     console.log('request url: ', urlPath, req.method);
     const file = __dirname
     if (urlPath === '/' || urlPath === '/login.html') {
         const filePath = path.join(file.concat('/view'), '/login.html');
-        fs.readFile(filePath, 'utf8', (err, content) => {
+        fs.readFile(filePath, 'utf8', async(err, content) => {
             if (err) {
                 res.writeHead(500);
                 res.end('Error serving login page');
             } else {
                 res.writeHead(200, { 'Content-Type': 'text/html' });
+                await createTable();
                 res.end(content);
             }
         });
     } else if (urlPath === '/dashboard.html') {
         const filePath = path.join(__dirname, '/view/dashboard.html');
-        fs.readFile(filePath, (err, content) => {
+        fs.readFile(filePath, async(err, content) => {
             if (err) {
                 res.writeHead(500);
                 res.end('Error serving dashboard page');
             } else {
                 res.writeHead(200, { 'Content-Type': 'text/html' });
+                await createPostTable();
                 res.end(content);
             }
         });
@@ -42,12 +47,13 @@ const server = http.createServer((req, res) => {
         });
     } else if (urlPath === '/signup.html') {
         const filePath = path.join(__dirname, '/view/signup.html');
-        fs.readFile(filePath, (err, content) => {
+        fs.readFile(filePath, async(err, content) => {
             if (err) {
                 res.writeHead(500);
                 res.end('Error serving signup page');
             } else {
                 res.writeHead(200, { 'Content-Type': 'text/html' });
+                await createTable();
                 res.end(content);
             }
         });
@@ -117,7 +123,109 @@ const server = http.createServer((req, res) => {
                 res.end(content);
             }
         });
-    } else if (urlPath.startsWith === '/assets') {
+    } else if (urlPath == '/users') {
+        try {
+            const users = await fetchUsers();
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(users));
+        } catch (error) {
+            console.error('Error retrieving users', error);
+            res.writeHead(500);
+            res.end('Error retrieving users');
+        }
+    } else if (urlPath == '/registerUser') {
+        let body = '';
+        req.on('data', (chunk) => {
+            body += chunk.toString();
+        });
+        req.on('end', async() => {
+            const userData = JSON.parse(body);
+            try {
+                const response = await createUser(userData.first_name, userData.last_name, userData.mobile_num, userData.email, userData.password);
+                res.writeHead(200);
+                res.end(JSON.stringify(response));
+            } catch (error) {
+                console.error('Error creating user', error);
+                res.writeHead(500);
+                res.end('Error creating user');
+            }
+        })
+    } else if (urlPath == '/loginUser') {
+        let body = '';
+        req.on('data', (chunk) => {
+            body += chunk.toString();
+        });
+        req.on('end', async () => {
+            const userData = JSON.parse(body);
+            try {
+                const response = await checkUserExist(userData.email, userData.password)
+                console.log('checkUserExist: ', response);
+                res.writeHead(200);
+                res.end(JSON.stringify(response));
+            } catch (error) {
+                console.error('Error fetching user', error);
+                res.writeHead(500);
+                res.end('Error fetching user');
+            }
+        })
+    } else if (urlPath == '/createPost') {
+        let body = '';
+        req.on('data', (chunk) => {
+            body += chunk.toString();
+        });
+        req.on('end', async () => {
+            const postData = JSON.parse(body);
+            try {
+                const response = await createPost(postData.txt_post_title, postData.txt_post_msg, postData.post_type)
+                res.writeHead(200);
+                res.end(JSON.stringify(response));
+            } catch (error) {
+                console.error('Error creating post', error);
+                res.writeHead(500);
+                res.end('Error creating post');
+            }
+        })
+    } else if (urlPath == '/getPosts') {
+        try {
+            const posts = await fetchPosts();
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(posts));
+        } catch (error) {
+            console.error('Error retrieving posts', error);
+            res.writeHead(500);
+            res.end('Error retrieving posts');
+        }
+    } else if (urlPath.startsWith == '/getPostsDetails/:id') {
+        console.log('req.params.id, ', req.url.params.id);
+        try {
+            const postDetails = await fetchPostDetailsById(req.url.params.id)
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(postDetails));
+        } catch (error) {
+            console.error('Error retrieving post details', error);
+            res.writeHead(500);
+            res.end('Error retrieving post details');
+        }
+    } else if (urlPath == '/editPost') {
+        let body = '';
+        req.on('data', (chunk) => {
+            body += chunk.toString();
+        });
+        req.on('end', async () => {
+            const postData = JSON.parse(body);
+            try {
+                const response = await editPost(postData.txt_post_title, postData.txt_post_msg, postData.post_type, postData.id)
+                res.writeHead(200);
+                res.end(JSON.stringify(response));
+            } catch (error) {
+                console.error('Error editing post', error);
+                res.writeHead(500);
+                res.end('Error editing post');
+            }
+        })
+    } 
+    
+    else if (urlPath.startsWith === '/assets') {
         console.log('urlPath.startsWith: ', urlPath);
         const filePath = path.join(__dirname, urlPath);
         console.log('filepath: ', filePath);
@@ -164,33 +272,7 @@ client.connect((err) => {
     }
 })
 
-// const execute = async (query) => {
-//     try {
-//         await client.connect();     // gets connection
-//         await client.query(query);  // sends queries
-//         console.log('database connection...')
-//         return true;
-//     } catch (error) {
-//         console.error(error.stack);
-//         return false;
-//     } finally {
-//         await client.end();         // closes connection
-//     }
-// };
 
-const text = `
-    CREATE TABLE IF NOT EXISTS "users" (
-	    "id" SERIAL,
-	    "name" VARCHAR(100) NOT NULL,
-	    "role" VARCHAR(15) NOT NULL,
-	    PRIMARY KEY ("id")
-    );`;
-
-// execute(text).then(result => {
-//     if (result) {
-//         console.log('Table created');
-//     }
-// });
 
 const port = 3000;
 server.listen(port, () => {
