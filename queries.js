@@ -22,7 +22,7 @@ async function createTable() {
         await pool.query(query);
         console.log('Table created successfully');
     } catch (error) {
-        console.error('Error creating table', error);
+        console.log('Error creating table', error);
         throw error;
     }
 }
@@ -49,12 +49,25 @@ async function fetchUsers() {
 
 async function checkUserExist(email, password) {
     try {
-        const query = 'SELECT COUNT(*) AS userCount FROM users WHERE email = $1 AND password = $2';
+        const query = 'SELECT * FROM users WHERE email = $1 AND password = $2';
         const result = await pool.query(query, [email, password]);
-        const credentialCount = result.rows[0]
-        return credentialCount > 0;
+        if (result.rowCount > 0) {
+            return result.rows[0]
+        } else {
+            return { 'message': 'Invalid username/password', 'register_error': 'Oops! Email is already exist.'}
+        }
     } catch (error) {
         console.log('Error executing checkUserExist query', error);
+    }
+}
+
+async function checkEmailRegistered(email) {
+    try {
+        const query = 'SELECT * FROM users WHERE email = $1';
+        const result = await pool.query(query, [email]);
+        return result.rowCount > 0
+    } catch (error) {
+        console.log('Error executing checkEmailRegistered query', error);
     }
 }
 
@@ -65,21 +78,22 @@ async function createPostTable() {
         id SERIAL PRIMARY KEY,
         txt_post_title VARCHAR(255) NOT NULL,
         txt_post_msg VARCHAR(255) NOT NULL,
-        post_type VARCHAR(12) NOT NULL
+        post_type VARCHAR(12) NOT NULL,
+        created_user_id SERIAL NOT NULL
       )
     `;
         await pool.query(query);
         console.log('Post table created successfully');
     } catch (error) {
-        console.error('Error creating table', error);
+        console.log('Error creating table', error);
         throw error;
     }
 }
 
-async function createPost(txt_post_title, txt_post_msg, post_type) {
+async function createPost(txt_post_title, txt_post_msg, post_type, created_user_id) {
     try {
-        const query = 'INSERT INTO posts (txt_post_title, txt_post_msg, post_type) VALUES ($1, $2, $3)';
-        await pool.query(query, [txt_post_title, txt_post_msg, post_type]);
+        const query = 'INSERT INTO posts (txt_post_title, txt_post_msg, post_type, created_user_id) VALUES ($1, $2, $3, $4)';
+        await pool.query(query, [txt_post_title, txt_post_msg, post_type, created_user_id]);
         return 'Post created successfully';
     } catch (error) {
         console.log('Error executing createPost query', error);
@@ -97,7 +111,6 @@ async function fetchPosts() {
 }
 
 async function fetchPostDetailsById(id) {
-    console.log('fetchPostDetailsById id ===>', id);
     try {
         const query = 'SELECT * FROM posts WHERE id = $1';
         const result = await pool.query(query, [id]);
@@ -117,14 +130,37 @@ async function editPost(txt_post_title, txt_post_msg, post_type, post_id) {
     }
 }
 
+async function fetchSerachPostList(searchKeyword) {
+    try {
+        const query = 'SELECT * FROM posts WHERE txt_post_title LIKE $1 OR txt_post_msg LIKE $1';
+        const result = await pool.query(query, [`%${searchKeyword}%`]);
+        return result.rows
+    } catch (error) {
+        console.log('Error executing searchPost query', error);
+    }
+}
+
+async function deletePost(post_id) {
+    try {
+        const query = 'DELETE FROM posts WHERE id = $1';
+        await pool.query(query, [post_id]);
+        return 'Post has been deleted successfully';
+    } catch (error) {
+        console.log('Error executing deletePost query', error);
+    }
+}
+
 module.exports = {
     createUser,
     createTable,
     fetchUsers,
     checkUserExist,
+    checkEmailRegistered,
     createPostTable,
     createPost,
     fetchPosts,
     fetchPostDetailsById,
-    editPost
+    editPost,
+    fetchSerachPostList,
+    deletePost
 }

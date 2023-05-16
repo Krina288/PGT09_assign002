@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<head>
+    <meta http-equiv="Content-type" content="text/html;charset=utf-8" />
+    <script type="text/javascript"></script>
+    <script src="/userProfile.js"></script>
+    <title>Profile</title>
+</head>
+
+<body>
+    <div style="margin-left: 5px;">
+        <!-- Header -->
+        <div id="div_dashboard_title" style="display: flex; 
+                    width: 100%; 
+                    flex-direction: row; 
+                    justify-items: center;
+                    justify-content: space-between;">
+            <h1>Profile</h1>
+            <div style="display: flex; justify-items: center;">
+                <button id="btn_sign_out"
+                    style="margin-left: 5px; font-weight: 600; border: none; background-color: transparent;"
+                    onclick="onPressSignOut()">Sign Out</button>
+            </div>
+        </div>
+
+        <div id="div_profile">
+            <!-- First/Last name input -->
+            <label for="first_name" style="margin-left: 5px;">First Name</label><br>
+            <input type="text" id="first_name" name="first_name" placeholder="Enter first name"
+                style="margin: 5px; padding: 5px;" maxlength="32" readonly><br>
+            <label for="last_name" style="margin-left: 5px;">Last Name</label><br>
+            <input type="text" id="last_name" name="last_name" placeholder="Enter last name"
+                style="margin: 5px; padding: 5px;" maxlength="32" readonly><br>
+
+            <!-- Mobile number input -->
+            <label for="mobile_num" style="margin-left: 5px;">Mobile Number</label><br>
+            <input type="tel" id="mobile_num" name="mobile_num" placeholder="Enter mobile number"
+                style="margin: 5px; padding: 5px;" maxlength="11" readonly><br>
+
+            <!-- Email address input -->
+            <label for="email" style="margin-left: 5px;">Email</label><br>
+            <input type="email" id="email" name="email" placeholder="Enter email address"
+                style="margin: 5px; padding: 5px;" readonly><br>
+        </div>
+        <script>
+            getUserDetails()
+        </script>
+    </div>
+</body>
+
+</html>

@@ -13,12 +13,23 @@ function onPressAddPost() {
     validation()
 }
 
+function onPressViewProfile() {
+    window.location.href = '/userProfile.html'
+}
+
 function onPressSignOut() {
     window.location.href = '/login.html';
 }
 
 function onPressSearchPost() {
-    window.location.href = '/searchPost.html';
+    var searchKeyword = document.getElementById('txt_search').value.trim();
+    if (searchKeyword == '') {
+        alert('Please enter search keyword')
+    } else {
+        localStorage.setItem('searchKeyword', searchKeyword)
+        document.getElementById('txt_search').value = "";
+        window.location.href = '/searchPost.html';
+    }
 }
 
 function onPressPostDetail(index) {
@@ -32,8 +43,10 @@ function onPressEditPost(index) {
 }
 
 function onPressDeletePost(index) {
-    //add alert
-    alert('Post is deleted successfully.')
+    localStorage.setItem('currentPost', JSON.stringify(arrPosts[index]))
+    setTimeout(() => {
+        deletePost()
+    }, 1000)
 }
 
 //Validation of input
@@ -57,42 +70,8 @@ function validation() {
     }
 }
 
-
-function createPost() {
-    fetch('/createPost', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(create_post_data)
-    })
-        .then(response => response.text())
-        .then(data => {
-            console.log("create post data ==>", data);
-            alert('Post is created successfully.');
-            document.getElementById('txt_post_title').value = "";
-            document.getElementById('txt_post_msg').value = "";
-        })
-        .catch(error => {
-            console.log('Error creating post', error);
-        })
-}
-
-function getPostList() {
-    arrPosts = []
-    fetch('/getPosts')
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            arrPosts = data
-            setupPostList()
-        })
-        .catch(error => {
-            console.error('Error fetching posts', error);
-        });
-}
-
 function setupPostList() {
+    var userDeatils = JSON.parse(localStorage.getItem('userDetails'))
     const container = document.getElementById('div_post_list');
     const list = document.createElement('post_list');
     list.style.listStyle = 'none'
@@ -147,8 +126,6 @@ function setupPostList() {
             onPressEditPost(index);
         });
 
-        divButtonContainer.appendChild(buttonEdit);
-
         const buttonDelete = document.createElement('button');
         // button.onclick = onPressEditPost()
         buttonDelete.style.width = '60px';
@@ -158,7 +135,10 @@ function setupPostList() {
             onPressDeletePost(index);
         });
 
-        divButtonContainer.appendChild(buttonDelete);
+        if (userDeatils.id == item.created_user_id) {
+            divButtonContainer.appendChild(buttonEdit);
+            divButtonContainer.appendChild(buttonDelete);
+        }
 
         listItem.appendChild(button);
         listItem.appendChild(divButtonContainer);
@@ -167,4 +147,56 @@ function setupPostList() {
         list.appendChild(listItem);
     });
     container.appendChild(list);
+}
+
+function createPost() {
+    var userDeatils = JSON.parse(localStorage.getItem('userDetails'))
+    create_post_data['created_user_id'] = userDeatils.id
+    fetch('/createPost', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(create_post_data)
+    })
+        .then(response => response.text())
+        .then(data => {
+            console.log("create post data ==>", data);
+            alert('Post is created successfully.');
+            document.getElementById('txt_post_title').value = "";
+            document.getElementById('txt_post_msg').value = "";
+            location.reload()
+        })
+        .catch(error => {
+            console.log('Error creating post', error);
+        })
+}
+
+function getPostList() {
+    arrPosts = []
+    fetch('/getPosts')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            arrPosts = data
+            setupPostList()
+        })
+        .catch(error => {
+            console.log('Error fetching posts', error);
+        });
+}
+
+function deletePost() {
+    var postDetail = JSON.parse(localStorage.getItem('currentPost'));
+    fetch(`/deletePost?id=${postDetail.id}`, {
+        method: 'DELETE',
+    })
+        .then(response => response.text())
+        .then(data => {
+            alert(`${data}`)
+            location.reload()
+        })
+        .catch(error => {
+            console.log('Error deleting post', error);
+        })
 }

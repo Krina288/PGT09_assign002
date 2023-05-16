@@ -50,9 +50,17 @@ function createUser() {
         .then(response => response.text())
         .then(data => {
             console.log("create user data ==>", data);
-            window.location.href = '/dashboard.html';
+
+            var user_data = JSON.parse(data)
+            if (user_data.error == 'Email is already registered.') {
+                alert(user_data.error)
+                document.getElementById('email').value = ""
+            } else {
+                localStorage.setItem('userDetails', data)
+                window.location.href = '/dashboard.html';
+            }
         })
         .catch(error => {
-            console.log('Error creating user', error);
+            console.log('Error creating user response', error);
         })
 }

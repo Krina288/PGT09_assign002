@@ -21,16 +21,23 @@ function onPressDeletePost(index) {
 
 //Change API here for search post list --- pushpinder
 function getPostList() {
+    var search = localStorage.getItem('searchKeyword')
+    console.log('search keyword ==', search);
     arrPosts = []
-    fetch('/getPosts')
+    fetch(`/getSearchPosts?search=${search}`)
         .then(response => response.json())
         .then(data => {
             console.log(data);
             arrPosts = data
-            setupPostList()
+            if (arrPosts.length == 0) {
+                alert('Oops! post not found.')
+                history.back();
+            } else {
+                setupPostList()
+            }
         })
         .catch(error => {
-            console.error('Error fetching posts', error);
+            console.log('Error fetching search posts', error);
         });
 }
 

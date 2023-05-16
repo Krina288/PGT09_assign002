@@ -1,14 +1,20 @@
 const { Client } = require('pg');
 const http = require('http');
+const url = require('url');
 const fs = require('fs');
 const path = require('path');
 const { createUser, createTable, fetchUsers,
-    checkUserExist, createPostTable, createPost,
-    fetchPosts, fetchPostDetailsById, editPost} = require('./queries')
+        checkUserExist, createPostTable, createPost,
+        fetchPosts, fetchPostDetailsById, editPost,
+        fetchSerachPostList, deletePost, checkEmailRegistered} = require('./queries')
 
 const server = http.createServer(async(req, res) => {
     const urlPath = req.url
+    const parsedUrl = url.parse(req.url, true);
+    const queryParameters = parsedUrl.query;
+
     console.log('request url: ', urlPath, req.method);
+
     const file = __dirname
     if (urlPath === '/' || urlPath === '/login.html') {
         const filePath = path.join(file.concat('/view'), '/login.html');
@@ -74,6 +80,17 @@ const server = http.createServer(async(req, res) => {
             if (err) {
                 res.writeHead(500);
                 res.end('Error serving searchPost page');
+            } else {
+                res.writeHead(200, { 'Content-Type': 'text/html' });
+                res.end(content);
+            }
+        });
+    } else if (urlPath === '/userProfile.html') {
+        const filePath = path.join(__dirname, '/view/userProfile.html');
+        fs.readFile(filePath, (err, content) => {
+            if (err) {
+                res.writeHead(500);
+                res.end('Error serving userProfile page');
             } else {
                 res.writeHead(200, { 'Content-Type': 'text/html' });
                 res.end(content);
@@ -145,6 +162,17 @@ const server = http.createServer(async(req, res) => {
                 res.end(content);
             }
         });
+    } else if (urlPath === '/userProfile.js') {
+        const filePath = path.join(__dirname, '/controller/userProfile.js');
+        fs.readFile(filePath, (err, content) => {
+            if (err) {
+                res.writeHead(500);
+                res.end('Error serving userProfile.js page');
+            } else {
+                res.writeHead(200, { 'Content-Type': 'text/javascript' });
+                res.end(content);
+            }
+        });
     } else if (urlPath == '/users') {
         try {
             const users = await fetchUsers();
@@ -162,6 +190,15 @@ const server = http.createServer(async(req, res) => {
         });
         req.on('end', async() => {
             const userData = JSON.parse(body);
+            console.log('userData =>', userData);
+
+            const emailExists = await checkEmailRegistered(userData.email);
+            if (emailExists) {
+                res.statusCode = 400;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: 'Email is already registered.' }));
+                return;
+            }
             try {
                 const response = await createUser(userData.first_name, userData.last_name, userData.mobile_num, userData.email, userData.password);
                 res.writeHead(200);
@@ -198,7 +235,7 @@ const server = http.createServer(async(req, res) => {
         req.on('end', async () => {
             const postData = JSON.parse(body);
             try {
-                const response = await createPost(postData.txt_post_title, postData.txt_post_msg, postData.post_type)
+                const response = await createPost(postData.txt_post_title, postData.txt_post_msg, postData.post_type, postData.created_user_id)
                 res.writeHead(200);
                 res.end(JSON.stringify(response));
             } catch (error) {
@@ -245,7 +282,27 @@ const server = http.createServer(async(req, res) => {
                 res.end('Error editing post');
             }
         })
-    } 
+    } else if (urlPath == `/getSearchPosts?search=${queryParameters.search}`) {
+        try {
+            const posts = await fetchSerachPostList(queryParameters.search);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(posts));
+        } catch (error) {
+            console.error('Error retrieving search posts', error);
+            res.writeHead(500);
+            res.end('Error retrieving search posts');
+        }
+    } else if (urlPath == `/deletePost?id=${queryParameters.id}`) {
+        try {
+            const post = await deletePost(queryParameters.id);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(post));
+        } catch (error) {
+            console.error('Error retrieving delete post', error);
+            res.writeHead(500);
+            res.end('Error retrieving delete post');
+        }
+    }
     
     else if (urlPath.startsWith === '/assets') {
         console.log('urlPath.startsWith: ', urlPath);

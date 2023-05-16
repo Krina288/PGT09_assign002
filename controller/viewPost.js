@@ -1,6 +1,12 @@
 var post_data = {}
+var userDeatils = {}
+
 function onPressSignOut() {
     window.location.href = 'login.html';
+}
+
+function onPressViewProfile() {
+    window.location.href = '/userProfile.html'
 }
 
 function onPressEditPost() {
@@ -8,25 +14,24 @@ function onPressEditPost() {
 }
 
 function onPressDeletePost() {
-    //add confirmation pop up
-    window.location.href = '/dashboard.html';
+    deletePost()
 }
 
-// function getPostDetails() {
 post_data = JSON.parse(localStorage.getItem('currentPost'));
-console.log('post_data ===', post_data);
+userDeatils = JSON.parse(localStorage.getItem('userDetails'));
+console.log('post_data ===', post_data, userDeatils);
 
-    // let url = '/getPostsDetails/' + post_data.id
-    // console.log('post detailsssss: ', post_data, url);
-    // fetch(url)
-    //     .then(response => {
-    //         response.json()
-    //         console.log('response ====', response);
-    //     })
-    //     .then(data => {
-    //         console.log(data);
-    //     })
-    //     .catch(error => {
-    //         console.error('Error fetching post details', error);
-    //     });
-// }
+function deletePost() {
+    var postDetail = JSON.parse(localStorage.getItem('currentPost'));
+    fetch(`/deletePost?id=${postDetail.id}`, {
+        method: 'DELETE',
+    })
+        .then(response => response.text())
+        .then(data => {
+            alert(`${data}`)
+            window.location.href = '/dashboard.html';
+        })
+        .catch(error => {
+            console.log('Error deleting post', error);
+        })
+}

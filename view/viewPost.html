@@ -17,13 +17,16 @@
                 justify-content: space-between;">
             <h1>Post Detail</h1>
             <div style="display: flex; justify-items: center;">
-                <button id="btn_profile" style="border: none; background-color: transparent; margin-right: -5px;" onclick="onPressEditPost()">
+                <button id="btn_edit" style="border: none; background-color: transparent; margin-right: -5px;"
+                    onclick="onPressEditPost()">
                     <img src="../assets/edit.png" style="align-self: center; height: 30px;">
                 </button>
-                <button id="btn_profile" style="border: none; background-color: transparent; margin-right: -5px;">
+                <button id="btn_delete" style="border: none; background-color: transparent; margin-right: -5px;"
+                    onclick="onPressDeletePost()">
                     <img src="../assets/delete.png" style="align-self: center; height: 30px;">
                 </button>
-                <button id="btn_profile" style="border: none; background-color: transparent; margin-right: -5px;">
+                <button id="btn_profile" style="border: none; background-color: transparent; margin-right: -5px;"
+                    onclick="onPressViewProfile()">
                     <img src="../assets/profile-user.png" style="align-self: center; height: 30px;">
                 </button>
                 <button id="btn_sign_out"
@@ -33,14 +36,23 @@
         </div>
 
         <!-- Post details -->
-        <div style="display: flex; flex-direction: column; width: 40%; border-width: 1px; border-color: black; border-style: groove; padding: 10px;">
+        <div
+            style="display: flex; flex-direction: column; width: 40%; border-width: 1px; border-color: black; border-style: groove; padding: 10px;">
             <label style="font-weight: 600;" id="post_title"></label><br>
             <label id="post_msg"></label>
         </div>
         <script>
             document.getElementById('post_title').textContent = post_data.txt_post_title
             document.getElementById('post_msg').textContent = post_data.txt_post_msg
+            if (userDeatils.id == post_data.created_user_id) {
+                document.getElementById('btn_edit').style.visibility = 'visible'
+                document.getElementById('btn_delete').style.visibility = 'visible'
+            } else {
+                document.getElementById('btn_edit').style.visibility = 'hidden'
+                document.getElementById('btn_delete').style.visibility = 'hidden'
+            }
         </script>
     </div>
 </body>
+
 </html>

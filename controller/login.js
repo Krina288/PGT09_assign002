@@ -40,14 +40,17 @@ function loginUser() {
     })
         .then(response => response.text())
         .then(data => {
-            console.log("login user data ==>", data);
-            // if (data !== 'false') {
+            var user_data = JSON.parse(data)
+            if (user_data.message == 'Invalid username/password') {
+                alert(user_data.message)
+                document.getElementById('email').value = ""
+                document.getElementById('password').value = ""
+            } else {
+                localStorage.setItem('userDetails', data)
                 window.location.href = '/dashboard.html';
-            // } else {
-            //     console.log('Invalid email/password');
-            // }
+            }
         })
         .catch(error => {
-            console.log('Error creating user', error);
+            console.log('Error logging user', error);
         })
 }

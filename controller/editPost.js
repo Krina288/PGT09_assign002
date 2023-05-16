@@ -18,12 +18,14 @@ console.log('post_data ===>', post_data);
 function editPost() {
     var public = document.getElementById("btn_public");
     var private = document.getElementById("btn_private");
+    var userDeatils = JSON.parse(localStorage.getItem('userDetails'))
 
     edit_post_data = {
         txt_post_title: document.getElementById('txt_post_title').value,
         txt_post_msg: document.getElementById('txt_post_msg').value,
         post_type: public.checked == true ? 'public' : 'private',
-        id: post_data.id
+        id: post_data.id,
+        created_user_id: userDeatils.id
     }
     console.log('edit_post_data ==>', edit_post_data);
     fetch('/editPost', {
