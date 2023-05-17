@@ -19,7 +19,6 @@ function onPressDeletePost() {
     deletePost()
 }
 
-
 function checkToken() {
     post_data = JSON.parse(localStorage.getItem('currentPost'));
     userDeatils = JSON.parse(localStorage.getItem('userDetails'));
@@ -47,10 +46,11 @@ function checkToken() {
 function deletePost() {
     var postDetail = JSON.parse(localStorage.getItem('currentPost'));
     userDeatils = JSON.parse(localStorage.getItem('userDetails'));
-    fetch(`/deletePost?id=${postDetail.id}`, {
+    fetch(`/deletePost`, {
         method: 'DELETE',
         headers: {
             'X-Token': userDeatils.token,
+            'id': postDetail.id
         }
     })
         .then(response => response.text())

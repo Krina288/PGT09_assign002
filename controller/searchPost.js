@@ -17,8 +17,10 @@ function onPressEditPost(index) {
 }
 
 function onPressDeletePost(index) {
-    //add alert
-    alert('Post is deleted successfully.')
+    localStorage.setItem('currentPost', JSON.stringify(arrPosts[index]))
+    setTimeout(() => {
+        deletePost()
+    }, 1000)
 }
 
 function getPostList() {
@@ -71,7 +73,7 @@ function setupPostList() {
     arrPublicPost = arrPosts.filter((item) => item.post_type == 'public')
     arrFilteredPost = arrPrivatePost.concat(arrPublicPost);
 
-    arrFilteredPost.forEach((item, index) => {
+    arrPosts.forEach((item, index) => {
         // Create a list item element for each item
         const listItem = document.createElement('li');
         listItem.style.marginTop = '10px';
@@ -141,4 +143,24 @@ function setupPostList() {
         list.appendChild(listItem);
     });
     container.appendChild(list);
+}
+
+function deletePost() {
+    var userDeatils = JSON.parse(localStorage.getItem('userDetails'))
+    var postDetail = JSON.parse(localStorage.getItem('currentPost'));
+    fetch(`/deletePost`, {
+        method: 'DELETE',
+        headers: {
+            'X-Token': userDeatils.token,
+            'id': postDetail.id
+        }
+    })
+        .then(response => response.text())
+        .then(data => {
+            alert(`${data}`)
+            location.reload()
+        })
+        .catch(error => {
+            console.log('Error deleting post', error);
+        })
 }

@@ -4,6 +4,7 @@ const url = require('url');
 const sgMail = require('@sendgrid/mail')
 const fs = require('fs');
 const path = require('path');
+const {log} = require('/login')
 const { createUser, createTable, fetchUsers,
         checkUserExist, createPostTable, createPost,
         fetchPosts, fetchPostDetailsById, editPost,
@@ -12,8 +13,10 @@ const { createUser, createTable, fetchUsers,
 const SENDGRID_API_KEY = 'G.q62-KblhSyqh9wSoylYAww.XSW2tCu5-L738S1AXBhFwBygIrF-eGFBFtGW7THQ274'
 
 const accountSid = 'ACd44f228cd1ff03220d401854354ae70b';
-const authToken = 'f5587b9b932421e3e286a0517c463a21';
+const authToken = '392b471169e73babad6b19d7ee9da993';
 const clientTwilio = require('twilio')(accountSid, authToken);
+
+const timeoutDuration = 1000; 
 
 const server = http.createServer(async(req, res) => {
     const urlPath = req.url
@@ -21,15 +24,16 @@ const server = http.createServer(async(req, res) => {
     const queryParameters = parsedUrl.query;
     const token = req.headers['x-token'];
 
+    req.setTimeout(timeoutDuration);
     console.log('request url: ', urlPath, req.method);
 
-    // clientTwilio.verify.v2.services('VAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
-    //     .verifications
-    //     .create({ to: 'krinampatel28@gmail.com', channel: 'email' })
-    //     .then(verification => console.log(verification.sid));
+    req.socket.timeout = setTimeout(() => {
+        
+    }, timeoutDuration);
 
     const file = __dirname
     if (urlPath === '/' || urlPath === '/login.html') {
+        clearTimeout(req.socket.timeout);
         const filePath = path.join(file.concat('/view'), '/login.html');
         fs.readFile(filePath, 'utf8', async(err, content) => {
             if (err) {
@@ -42,6 +46,7 @@ const server = http.createServer(async(req, res) => {
             }
         });
     } else if (urlPath === '/signup.html') {
+        clearTimeout(req.socket.timeout);
         const filePath = path.join(__dirname, '/view/signup.html');
         fs.readFile(filePath, async (err, content) => {
             if (err) {
@@ -54,6 +59,7 @@ const server = http.createServer(async(req, res) => {
             }
         });
     } else if (urlPath === `/dashboard.html`) {
+        clearTimeout(req.socket.timeout);
         const filePath = path.join(__dirname, '/view/dashboard.html');
         fs.readFile(filePath, async(err, content) => {
             if (err) {
@@ -66,6 +72,7 @@ const server = http.createServer(async(req, res) => {
             }
         });
     } else if (urlPath === '/viewPost.html') {
+        clearTimeout(req.socket.timeout);
         const filePath = path.join(__dirname, '/view/viewPost.html');
         fs.readFile(filePath, (err, content) => {
             if (err) {
@@ -77,6 +84,7 @@ const server = http.createServer(async(req, res) => {
             }
         });
     } else if (urlPath === '/editPost.html') {
+        clearTimeout(req.socket.timeout);
         const filePath = path.join(__dirname, '/view/editPost.html');
         fs.readFile(filePath, (err, content) => {
             if (err) {
@@ -88,6 +96,7 @@ const server = http.createServer(async(req, res) => {
             }
         });
     } else if (urlPath === '/searchPost.html') {
+        clearTimeout(req.socket.timeout);
         const filePath = path.join(__dirname, '/view/searchPost.html');
         fs.readFile(filePath, (err, content) => {
             if (err) {
@@ -99,6 +108,7 @@ const server = http.createServer(async(req, res) => {
             }
         });
     } else if (urlPath === '/userProfile.html') {
+        clearTimeout(req.socket.timeout);
         const filePath = path.join(__dirname, '/view/userProfile.html');
         fs.readFile(filePath, (err, content) => {
             if (err) {
@@ -266,23 +276,20 @@ const server = http.createServer(async(req, res) => {
         try {
             const posts = await fetchPosts();
             res.writeHead(200, { 'Content-Type': 'application/json' });
+            // clientTwilio.verify.v2.services('VAf889d2f3dbb2fd2d1980d8003033341a')
+            //     .verifications
+            //     .create({ to: 'krinampatel28@gmail.com', channel: 'email' })
+            //     .then(verification => console.log(verification.sid));
 
-            clientTwilio.verify.v2.services('VAf889d2f3dbb2fd2d1980d8003033341a')
-                .verifications
-                .create({ to: 'krinampatel28@gmail.com', channel: 'email' })
-                .then(verification => console.log(verification.sid));
-
-            sgMail.setApiKey('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')
-            const msg = {
-                to: 'krinampatel28@gmail.com',
-                from: 'krinampatel28@gmail.com',
-                subject: 'testing email',
-                text: "any wherer node.js",
-                html: 'testing otp<strong>{{twilio_code}}</script>'
-                
-            }
-            sgMail.send(msg)
-
+            // sgMail.setApiKey('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')
+            // const msg = {
+            //     to: 'krinampatel28@gmail.com',
+            //     from: 'krinampatel28@gmail.com',
+            //     subject: 'testing email',
+            //     text: "any wherer node.js",
+            //     // html: 'testing otp<strong>{{twilio_code}}</script>'
+            // }
+            // sgMail.send(msg)
             res.end(JSON.stringify(posts));
         } catch (error) {
             console.error('Error retrieving posts', error);
@@ -327,9 +334,10 @@ const server = http.createServer(async(req, res) => {
             res.writeHead(500);
             res.end('Error retrieving search posts');
         }
-    } else if (urlPath == `/deletePost?id=${queryParameters.id}`) {
+    } else if (urlPath == `/deletePost`) {
+        var id = req.headers["id"]
         try {
-            const post = await deletePost(queryParameters.id);
+            const post = await deletePost(id);
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify(post));
         } catch (error) {

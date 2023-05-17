@@ -61,16 +61,18 @@ function createUser() {
                 alert(user_data.error)
                 document.getElementById('email').value = ""
             } else {
-                localStorage.setItem('userDetails', data)
-                const token = user_data.token;
+                alert(data)
+                // localStorage.setItem('userDetails', data)
+                // const token = user_data.token;
+                // console.log('registered token', token);
 
-                if (!token) {
-                    const errorMessage = document.createElement('p');
-                    errorMessage.innerText = 'Page not found';
-                    document.body.appendChild(errorMessage);
-                    return;
-                }
-                window.location.href = `/dashboard.html`;
+                // if (!token) {
+                //     const errorMessage = document.createElement('p');
+                //     errorMessage.innerText = 'Page not found';
+                //     document.body.appendChild(errorMessage);
+                //     return;
+                // }
+                window.location.href = `/login.html`;
             }
         })
         .catch(error => {

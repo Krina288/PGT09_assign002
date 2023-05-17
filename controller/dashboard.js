@@ -1,5 +1,6 @@
 const create_post_data = {};
 var arrPosts = []
+var arrFilteredPost = []
 
 function handleInput(e) {
     create_post_data[e.name] = e.value;
@@ -76,7 +77,6 @@ function setupPostList() {
     var userDeatils = JSON.parse(localStorage.getItem('userDetails'))
     var arrPrivatePost = []
     var arrPublicPost = []
-    var arrFilteredPost = []
     const container = document.getElementById('div_post_list');
     const list = document.createElement('post_list');
     list.style.listStyle = 'none'
@@ -86,7 +86,8 @@ function setupPostList() {
     arrPublicPost = arrPosts.filter((item) => item.post_type == 'public')
     arrFilteredPost = arrPrivatePost.concat(arrPublicPost);
 
-    arrFilteredPost.forEach((item, index) => {
+    console.log('Final array ==>', arrFilteredPost, arrPosts);
+    arrPosts.forEach((item, index) => {
         // Create a list item element for each item
         const listItem = document.createElement('li');
         listItem.style.marginTop = '10px';
@@ -141,6 +142,7 @@ function setupPostList() {
         buttonDelete.style.height = '30px';
         buttonDelete.textContent = 'Delete';
         buttonDelete.addEventListener('click', function () {
+            console.log('delete button index: ', index);
             onPressDeletePost(index);
         });
 
@@ -156,20 +158,6 @@ function setupPostList() {
         list.appendChild(listItem);
     });
     container.appendChild(list);
-}
-
-function sendEmail() {
-    Email.send({
-        Host: "smtp.gmail.com",
-        Username: "krinapatel2808@gmail.com",
-        Password: "Krina_patel_2808",
-        To: 'krinampatel28@gmail.com',
-        From: "test@gmail.com",
-        Subject: "This is the subject",
-        Body: "And this is the body"
-    }).then(
-        message => alert(message)
-    );
 }
 
 function createPost() {
@@ -227,10 +215,11 @@ function getPostList() {
 function deletePost() {
     var userDeatils = JSON.parse(localStorage.getItem('userDetails'))
     var postDetail = JSON.parse(localStorage.getItem('currentPost'));
-    fetch(`/deletePost?id=${postDetail.id}`, {
+    fetch(`/deletePost`, {
         method: 'DELETE',
         headers: {
             'X-Token': userDeatils.token,
+            'id': postDetail.id
         }
     })
         .then(response => response.text())

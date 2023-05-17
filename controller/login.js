@@ -62,3 +62,18 @@ function loginUser() {
             console.log('Error logging user', error);
         })
 }
+
+function sendEmail() {
+    var msg = 'The verification OTP has been sent to your email.'
+    Email.send({
+        Host: "smtp.gmail.com",
+        Username: "krinapatel2808@gmail.com",
+        Password: "Krina_patel_2808",
+        To: 'krinampatel28@gmail.com',
+        From: "test@gmail.com",
+        Subject: "This is the subject",
+        Body: `And this is the body ${msg}`
+    }).then(
+        message => alert(message)
+    );
+}
