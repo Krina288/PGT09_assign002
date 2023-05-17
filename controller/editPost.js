@@ -5,15 +5,35 @@ function handleInput(e) {
 }
 
 function onPressSignOut() {
-    window.location.href = '/login.html';
+    // window.location.href = '/login.html';
+    localStorage.clear();
+    window.location.replace("/");
 }
 
 function onPressSave() {
     editPost()
 }
 
-post_data = JSON.parse(localStorage.getItem('currentPost'));
-console.log('post_data ===>', post_data);
+function checkToken() {
+    post_data = JSON.parse(localStorage.getItem('currentPost'));
+    userDeatils = JSON.parse(localStorage.getItem('userDetails'));
+    console.log('post_data ===', post_data, userDeatils);
+    if (post_data == null || post_data == undefined || userDeatils == null || !userDeatils.token == null) {
+        const errorMessage = document.createElement('p');
+        errorMessage.innerText = 'Page not found';
+        document.getElementById('parent').innerHTML = '';
+        document.getElementById('parent').appendChild(errorMessage);
+        document.body.appendChild(errorMessage);
+        return;
+    }
+    document.getElementById('txt_post_title').value = post_data.txt_post_title
+    document.getElementById('txt_post_msg').textContent = post_data.txt_post_msg
+    if (post_data.post_type === 'public') {
+        document.getElementById('btn_public').checked = true
+    } else {
+        document.getElementById('btn_private').checked = true
+    }
+}
 
 function editPost() {
     var public = document.getElementById("btn_public");
@@ -31,7 +51,8 @@ function editPost() {
     fetch('/editPost', {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-Token': userDeatils.token,
         },
         body: JSON.stringify(edit_post_data)
     })

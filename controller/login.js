@@ -47,7 +47,15 @@ function loginUser() {
                 document.getElementById('password').value = ""
             } else {
                 localStorage.setItem('userDetails', data)
-                window.location.href = '/dashboard.html';
+                const token = user_data.token;
+
+                if (!token) {
+                    const errorMessage = document.createElement('p');
+                    errorMessage.innerText = 'Page not found';
+                    document.body.appendChild(errorMessage);
+                    return;
+                }
+                window.location.href = `/dashboard.html`;
             }
         })
         .catch(error => {

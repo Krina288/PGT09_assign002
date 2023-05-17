@@ -1,19 +1,32 @@
 const { Client } = require('pg');
 const http = require('http');
 const url = require('url');
+const sgMail = require('@sendgrid/mail')
 const fs = require('fs');
 const path = require('path');
 const { createUser, createTable, fetchUsers,
         checkUserExist, createPostTable, createPost,
         fetchPosts, fetchPostDetailsById, editPost,
-        fetchSerachPostList, deletePost, checkEmailRegistered} = require('./queries')
+    fetchSerachPostList, deletePost, checkEmailRegistered } = require('./queries')
+
+const SENDGRID_API_KEY = 'G.q62-KblhSyqh9wSoylYAww.XSW2tCu5-L738S1AXBhFwBygIrF-eGFBFtGW7THQ274'
+
+const accountSid = 'ACd44f228cd1ff03220d401854354ae70b';
+const authToken = 'f5587b9b932421e3e286a0517c463a21';
+const clientTwilio = require('twilio')(accountSid, authToken);
 
 const server = http.createServer(async(req, res) => {
     const urlPath = req.url
     const parsedUrl = url.parse(req.url, true);
     const queryParameters = parsedUrl.query;
+    const token = req.headers['x-token'];
 
     console.log('request url: ', urlPath, req.method);
+
+    // clientTwilio.verify.v2.services('VAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
+    //     .verifications
+    //     .create({ to: 'krinampatel28@gmail.com', channel: 'email' })
+    //     .then(verification => console.log(verification.sid));
 
     const file = __dirname
     if (urlPath === '/' || urlPath === '/login.html') {
@@ -28,7 +41,19 @@ const server = http.createServer(async(req, res) => {
                 res.end(content);
             }
         });
-    } else if (urlPath === '/dashboard.html') {
+    } else if (urlPath === '/signup.html') {
+        const filePath = path.join(__dirname, '/view/signup.html');
+        fs.readFile(filePath, async (err, content) => {
+            if (err) {
+                res.writeHead(500);
+                res.end('Error serving signup page');
+            } else {
+                res.writeHead(200, { 'Content-Type': 'text/html' });
+                await createTable();
+                res.end(content);
+            }
+        });
+    } else if (urlPath === `/dashboard.html`) {
         const filePath = path.join(__dirname, '/view/dashboard.html');
         fs.readFile(filePath, async(err, content) => {
             if (err) {
@@ -48,18 +73,6 @@ const server = http.createServer(async(req, res) => {
                 res.end('Error serving viewpost page');
             } else {
                 res.writeHead(200, { 'Content-Type': 'text/html' });
-                res.end(content);
-            }
-        });
-    } else if (urlPath === '/signup.html') {
-        const filePath = path.join(__dirname, '/view/signup.html');
-        fs.readFile(filePath, async(err, content) => {
-            if (err) {
-                res.writeHead(500);
-                res.end('Error serving signup page');
-            } else {
-                res.writeHead(200, { 'Content-Type': 'text/html' });
-                await createTable();
                 res.end(content);
             }
         });
@@ -245,9 +258,31 @@ const server = http.createServer(async(req, res) => {
             }
         })
     } else if (urlPath == '/getPosts') {
+        if (!token) {
+            res.writeHead(404, { 'Content-Type': 'text/plain' });
+            res.end('Page not found');
+            return;
+        }
         try {
             const posts = await fetchPosts();
             res.writeHead(200, { 'Content-Type': 'application/json' });
+
+            clientTwilio.verify.v2.services('VAf889d2f3dbb2fd2d1980d8003033341a')
+                .verifications
+                .create({ to: 'krinampatel28@gmail.com', channel: 'email' })
+                .then(verification => console.log(verification.sid));
+
+            sgMail.setApiKey('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')
+            const msg = {
+                to: 'krinampatel28@gmail.com',
+                from: 'krinampatel28@gmail.com',
+                subject: 'testing email',
+                text: "any wherer node.js",
+                html: 'testing otp<strong>{{twilio_code}}</script>'
+                
+            }
+            sgMail.send(msg)
+
             res.end(JSON.stringify(posts));
         } catch (error) {
             console.error('Error retrieving posts', error);
@@ -351,9 +386,15 @@ client.connect((err) => {
     }
 })
 
-
-
 const port = 3000;
 server.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+
+// //handle logout
+// function logOut() {
+//     client.end();
+//     window.location.href = '/login.html';
+// }
+
+// module.exports = {logOut}

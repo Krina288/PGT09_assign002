@@ -16,6 +16,7 @@ function onPressSignIn() {
 //Validation of input
 function validation() {
     var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    var passwordFormat = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     var first_name = document.getElementById('first_name').value.trim();
     var last_name = document.getElementById('last_name').value.trim();
     var mobile_num = document.getElementById('mobile_num').value.trim();
@@ -37,6 +38,10 @@ function validation() {
     } else {
         createUser()
     }
+
+    // else if (!password.match(passwordFormat)) {
+    //     alert('Please enter valid password')
+    // }
 }
 
 function createUser() {
@@ -57,7 +62,15 @@ function createUser() {
                 document.getElementById('email').value = ""
             } else {
                 localStorage.setItem('userDetails', data)
-                window.location.href = '/dashboard.html';
+                const token = user_data.token;
+
+                if (!token) {
+                    const errorMessage = document.createElement('p');
+                    errorMessage.innerText = 'Page not found';
+                    document.body.appendChild(errorMessage);
+                    return;
+                }
+                window.location.href = `/dashboard.html`;
             }
         })
         .catch(error => {

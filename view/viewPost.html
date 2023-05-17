@@ -8,7 +8,7 @@
 </head>
 
 <body>
-    <div style="margin-left: 5px;">
+    <div style="margin-left: 5px;" id="parent">
         <!-- Header -->
         <div id="div_dashboard_title" style="display: flex; 
                 width: 100%; 
@@ -41,18 +41,10 @@
             <label style="font-weight: 600;" id="post_title"></label><br>
             <label id="post_msg"></label>
         </div>
-        <script>
-            document.getElementById('post_title').textContent = post_data.txt_post_title
-            document.getElementById('post_msg').textContent = post_data.txt_post_msg
-            if (userDeatils.id == post_data.created_user_id) {
-                document.getElementById('btn_edit').style.visibility = 'visible'
-                document.getElementById('btn_delete').style.visibility = 'visible'
-            } else {
-                document.getElementById('btn_edit').style.visibility = 'hidden'
-                document.getElementById('btn_delete').style.visibility = 'hidden'
-            }
-        </script>
     </div>
+    <script>
+        checkToken()
+    </script>
 </body>
 
 </html>

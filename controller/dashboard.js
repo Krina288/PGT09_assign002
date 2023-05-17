@@ -18,7 +18,9 @@ function onPressViewProfile() {
 }
 
 function onPressSignOut() {
-    window.location.href = '/login.html';
+    // window.location.href = '/login.html';
+    localStorage.clear();
+    window.location.replace("/");
 }
 
 function onPressSearchPost() {
@@ -72,12 +74,19 @@ function validation() {
 
 function setupPostList() {
     var userDeatils = JSON.parse(localStorage.getItem('userDetails'))
+    var arrPrivatePost = []
+    var arrPublicPost = []
+    var arrFilteredPost = []
     const container = document.getElementById('div_post_list');
     const list = document.createElement('post_list');
     list.style.listStyle = 'none'
     list.style.padding = '0px'
 
-    arrPosts.forEach((item, index) => {
+    arrPrivatePost = arrPosts.filter((item) => item.created_user_id == userDeatils.id && item.post_type == 'private')
+    arrPublicPost = arrPosts.filter((item) => item.post_type == 'public')
+    arrFilteredPost = arrPrivatePost.concat(arrPublicPost);
+
+    arrFilteredPost.forEach((item, index) => {
         // Create a list item element for each item
         const listItem = document.createElement('li');
         listItem.style.marginTop = '10px';
@@ -149,13 +158,28 @@ function setupPostList() {
     container.appendChild(list);
 }
 
+function sendEmail() {
+    Email.send({
+        Host: "smtp.gmail.com",
+        Username: "krinapatel2808@gmail.com",
+        Password: "Krina_patel_2808",
+        To: 'krinampatel28@gmail.com',
+        From: "test@gmail.com",
+        Subject: "This is the subject",
+        Body: "And this is the body"
+    }).then(
+        message => alert(message)
+    );
+}
+
 function createPost() {
     var userDeatils = JSON.parse(localStorage.getItem('userDetails'))
     create_post_data['created_user_id'] = userDeatils.id
     fetch('/createPost', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-Token': userDeatils.token,
         },
         body: JSON.stringify(create_post_data)
     })
@@ -173,8 +197,22 @@ function createPost() {
 }
 
 function getPostList() {
+    var userDeatils = JSON.parse(localStorage.getItem('userDetails'))
     arrPosts = []
-    fetch('/getPosts')
+    if (userDeatils == null || !userDeatils.token == null) {
+        const errorMessage = document.createElement('p');
+        errorMessage.innerText = 'Page not found';
+        document.getElementById('parent').innerHTML = '';
+        document.getElementById('parent').appendChild(errorMessage);
+        document.body.appendChild(errorMessage);
+        return;
+    }
+
+    fetch('/getPosts', {
+        headers: {
+            'X-Token': userDeatils.token,
+        },
+    })
         .then(response => response.json())
         .then(data => {
             console.log(data);
@@ -187,9 +225,13 @@ function getPostList() {
 }
 
 function deletePost() {
+    var userDeatils = JSON.parse(localStorage.getItem('userDetails'))
     var postDetail = JSON.parse(localStorage.getItem('currentPost'));
     fetch(`/deletePost?id=${postDetail.id}`, {
         method: 'DELETE',
+        headers: {
+            'X-Token': userDeatils.token,
+        }
     })
         .then(response => response.text())
         .then(data => {

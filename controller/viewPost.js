@@ -2,7 +2,9 @@ var post_data = {}
 var userDeatils = {}
 
 function onPressSignOut() {
-    window.location.href = 'login.html';
+    // window.location.href = 'login.html';
+    localStorage.clear();
+    window.location.replace("/");
 }
 
 function onPressViewProfile() {
@@ -17,14 +19,39 @@ function onPressDeletePost() {
     deletePost()
 }
 
-post_data = JSON.parse(localStorage.getItem('currentPost'));
-userDeatils = JSON.parse(localStorage.getItem('userDetails'));
-console.log('post_data ===', post_data, userDeatils);
+
+function checkToken() {
+    post_data = JSON.parse(localStorage.getItem('currentPost'));
+    userDeatils = JSON.parse(localStorage.getItem('userDetails'));
+    console.log('post_data ===', post_data, userDeatils);
+    if (post_data == null || post_data == undefined || userDeatils == null || !userDeatils.token == null) {
+        const errorMessage = document.createElement('p');
+        errorMessage.innerText = 'Page not found';
+        document.getElementById('parent').innerHTML = '';
+        document.getElementById('parent').appendChild(errorMessage);
+        document.body.appendChild(errorMessage);
+        return;
+    }
+
+    document.getElementById('post_title').textContent = post_data.txt_post_title
+    document.getElementById('post_msg').textContent = post_data.txt_post_msg
+    if (userDeatils.id == post_data.created_user_id) {
+        document.getElementById('btn_edit').style.visibility = 'visible'
+        document.getElementById('btn_delete').style.visibility = 'visible'
+    } else {
+        document.getElementById('btn_edit').style.visibility = 'hidden'
+        document.getElementById('btn_delete').style.visibility = 'hidden'
+    }
+}
 
 function deletePost() {
     var postDetail = JSON.parse(localStorage.getItem('currentPost'));
+    userDeatils = JSON.parse(localStorage.getItem('userDetails'));
     fetch(`/deletePost?id=${postDetail.id}`, {
         method: 'DELETE',
+        headers: {
+            'X-Token': userDeatils.token,
+        }
     })
         .then(response => response.text())
         .then(data => {

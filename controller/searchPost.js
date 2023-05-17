@@ -1,7 +1,9 @@
 var arrPosts = []
 
 function onPressSignOut() {
-    window.location.href = '/login.html';
+    // window.location.href = '/login.html';
+    localStorage.clear();
+    window.location.replace("/");
 }
 
 function onPressPostDetail(index) {
@@ -19,12 +21,26 @@ function onPressDeletePost(index) {
     alert('Post is deleted successfully.')
 }
 
-//Change API here for search post list --- pushpinder
 function getPostList() {
+    var userDeatils = JSON.parse(localStorage.getItem('userDetails'));
+    console.log('userDeatils ===', userDeatils);
+    if (userDeatils == null || !userDeatils.token == null) {
+        const errorMessage = document.createElement('p');
+        errorMessage.innerText = 'Page not found';
+        document.getElementById('parent').innerHTML = '';
+        document.getElementById('parent').appendChild(errorMessage);
+        document.body.appendChild(errorMessage);
+        return;
+    }
+
     var search = localStorage.getItem('searchKeyword')
     console.log('search keyword ==', search);
     arrPosts = []
-    fetch(`/getSearchPosts?search=${search}`)
+    fetch(`/getSearchPosts?search=${search}`, {
+        headers: {
+            'X-Token': userDeatils.token,
+        }
+    })
         .then(response => response.json())
         .then(data => {
             console.log(data);
@@ -42,12 +58,20 @@ function getPostList() {
 }
 
 function setupPostList() {
+    var userDeatils = JSON.parse(localStorage.getItem('userDetails'))
     const container = document.getElementById('div_post_list');
     const list = document.createElement('post_list');
+    var arrPrivatePost = []
+    var arrPublicPost = []
+    var arrFilteredPost = []
     list.style.listStyle = 'none'
     list.style.padding = '0px'
 
-    arrPosts.forEach((item, index) => {
+    arrPrivatePost = arrPosts.filter((item) => item.created_user_id == userDeatils.id && item.post_type == 'private')
+    arrPublicPost = arrPosts.filter((item) => item.post_type == 'public')
+    arrFilteredPost = arrPrivatePost.concat(arrPublicPost);
+
+    arrFilteredPost.forEach((item, index) => {
         // Create a list item element for each item
         const listItem = document.createElement('li');
         listItem.style.marginTop = '10px';
@@ -96,8 +120,6 @@ function setupPostList() {
             onPressEditPost(index);
         });
 
-        divButtonContainer.appendChild(buttonEdit);
-
         const buttonDelete = document.createElement('button');
         // button.onclick = onPressEditPost()
         buttonDelete.style.width = '60px';
@@ -107,7 +129,10 @@ function setupPostList() {
             onPressDeletePost(index);
         });
 
-        divButtonContainer.appendChild(buttonDelete);
+        if (userDeatils.id == item.created_user_id) {
+            divButtonContainer.appendChild(buttonEdit);
+            divButtonContainer.appendChild(buttonDelete);
+        }
 
         listItem.appendChild(button);
         listItem.appendChild(divButtonContainer);

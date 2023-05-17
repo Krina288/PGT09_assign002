@@ -1,4 +1,12 @@
 const Pool = require('pg').Pool
+const { v4: uuidv4 } = require('uuid');
+// const twilio = require('twilio');
+
+// const accountSid = "ACd44f228cd1ff03220d401854354ae70b";
+// const authToken = "f5587b9b932421e3e286a0517c463a21";
+// const verifySid = "VAf889d2f3dbb2fd2d1980d8003033341a";
+// const client = twilio(accountSid, authToken);
+
 const pool = new Pool({
     host: 'localhost',
     port: 5432,
@@ -16,7 +24,8 @@ async function createTable() {
         last_name VARCHAR(255) NOT NULL,
         mobile_num VARCHAR(12) NOT NULL,
         email VARCHAR(255) NOT NULL,
-        password VARCHAR(32) NOT NULL
+        password VARCHAR(32) NOT NULL,
+        token VARCHAR(255) NOT NULL
       )
     `;
         await pool.query(query);
@@ -29,8 +38,9 @@ async function createTable() {
 
 async function createUser(first_name, last_name, mobile_num, email, password) {
     try {
-        const query = 'INSERT INTO users (first_name, last_name, mobile_num, email, password) VALUES ($1, $2, $3, $4, $5)';
-        await pool.query(query, [first_name, last_name, mobile_num, email, password]);
+        const token = uuidv4()
+        const query = 'INSERT INTO users (first_name, last_name, mobile_num, email, password, token) VALUES ($1, $2, $3, $4, $5, $6)';
+        await pool.query(query, [first_name, last_name, mobile_num, email, password, token]);
         return 'User created successfully';
     } catch (error) {
         console.log('Error executing createUser query', error);
@@ -71,6 +81,13 @@ async function checkEmailRegistered(email) {
     }
 }
 
+// async function sendVerificationCode(to, body) {
+//     client.messages.create({
+//         from: 'krinapatel2808@gmail.com'  ,
+//         body: body,
+//         to: to,
+//     })
+// }
 async function createPostTable() {
     try {
         const query = `

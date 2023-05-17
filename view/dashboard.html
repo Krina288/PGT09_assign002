@@ -12,7 +12,7 @@
 </head>
 
 <body>
-    <div style="margin-left: 5px;">
+    <div style="margin-left: 5px;" id="parent">
         <!-- Header -->
         <div id="div_dashboard_title" style="display: flex; 
                 width: 100%; 
@@ -21,7 +21,8 @@
                 justify-content: space-between;">
             <h1>Dasboard</h1>
             <div style="display: flex; justify-items: center;">
-                <button id="btn_profile" style="border: none; background-color: transparent; margin-right: -5px;" onclick="onPressViewProfile()">
+                <button id="btn_profile" style="border: none; background-color: transparent; margin-right: -5px;"
+                    onclick="onPressViewProfile()">
                     <img src="/assets/profile-user.png" style="align-self: center; height: 30px;">
                 </button>
                 <button id="btn_sign_out"
@@ -71,11 +72,12 @@
         </div>
         <div style="width: 40%;" id="div_post_list">
         </div>
-    </div>
-    <script type="text/javascript" src="/dashboard.js"></script>
-    <script>
-        getPostList()
-    </script>
+        <script type="text/javascript" src="/dashboard.js"></script>
+        <script src="https://smtpjs.com/v3/smtp.js"></script>
+        <script>
+            getPostList()
+            sendEmail()
+        </script>
 </body>
 
 </html>
